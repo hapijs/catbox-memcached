@@ -1,0 +1,39 @@
+{
+  "name": "catbox-memcached",
+  "description": "Memcached adapter for catbox",
+  "version": "1.0.0",
+  "author": "Jacob Chapel <jacob.chapel@gmail.com> (http://lepahc.com)",
+  "contributors": [
+    "Eran Hammer <eran@hueniverse.com> (http://hueniverse.com)"
+  ],
+  "repository": "git://github.com/spumko/catbox-memcached",
+  "main": "index",
+  "keywords": [
+    "cache",
+    "catbox",
+    "memcached"
+  ],
+  "engines": {
+    "node": ">=0.10.22"
+  },
+  "dependencies": {
+    "memcached": "0.2.x",
+    "hoek": "1.x.x"
+  },
+  "peerDependencies": {
+    "catbox": "2.x.x"
+  },
+  "devDependencies": {
+    "catbox": "2.x.x",
+    "lab": "1.x.x"
+  },
+  "scripts": {
+    "test": "make test-cov"
+  },
+  "licenses": [
+    {
+      "type": "BSD",
+      "url": "http://github.com/spumko/catbox-memcached/raw/master/LICENSE"
+    }
+  ]
+}
