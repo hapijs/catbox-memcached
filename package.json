@@ -1,7 +1,7 @@
 {
   "name": "catbox-memcached",
   "description": "Memcached adapter for catbox",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Jacob Chapel <jacob.chapel@gmail.com> (http://lepahc.com)",
   "contributors": [
     "Eran Hammer <eran@hueniverse.com> (http://hueniverse.com)"
@@ -17,7 +17,7 @@
     "node": ">=0.10.22"
   },
   "dependencies": {
-    "memcached": "0.2.x",
+    "memcached": "^0.2.8",
     "hoek": "1.x.x"
   },
   "peerDependencies": {
