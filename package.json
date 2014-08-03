@@ -4,9 +4,9 @@
   "version": "1.0.2",
   "author": "Jacob Chapel <jacob.chapel@gmail.com> (http://lepahc.com)",
   "contributors": [
-    "Eran Hammer <eran@hueniverse.com> (http://hueniverse.com)"
+    "Eran Hammer <eran@hammer.io> (http://hueniverse.com)"
   ],
-  "repository": "git://github.com/spumko/catbox-memcached",
+  "repository": "git://github.com/hapijs/catbox-memcached",
   "main": "index",
   "keywords": [
     "cache",
@@ -14,7 +14,7 @@
     "memcached"
   ],
   "engines": {
-    "node": ">=0.10.22"
+    "node": ">=0.10.30"
   },
   "dependencies": {
     "memcached": "^0.2.8",
@@ -30,7 +30,7 @@
   "licenses": [
     {
       "type": "BSD",
-      "url": "http://github.com/spumko/catbox-memcached/raw/master/LICENSE"
+      "url": "http://github.com/hapijs/catbox-memcached/raw/master/LICENSE"
     }
   ]
 }
