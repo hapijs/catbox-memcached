@@ -415,12 +415,7 @@ describe('Memcache', function () {
         it('returns an error when connection fails', function (done) {
 
             var options = {
-                location: '127.0.0.1:11212',
-                timeout: 10,
-                idle: 10,
-                failures: 0,
-                retries: 0,
-                poolSize: 1
+                location: '127.0.0.1:11212'
             };
 
             var memcache = new Memcached(options);
