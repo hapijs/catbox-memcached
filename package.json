@@ -18,11 +18,11 @@
   },
   "dependencies": {
     "memcached": "^0.2.8",
-    "hoek": "1.x.x"
+    "hoek": "2.x.x"
   },
   "devDependencies": {
     "catbox": "2.x.x",
-    "lab": "1.x.x"
+    "lab": "4.x.x"
   },
   "scripts": {
     "test": "make test-cov"

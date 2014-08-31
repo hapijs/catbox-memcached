@@ -4,19 +4,12 @@ var Lab = require('lab');
 var Catbox = require('catbox');
 var Memcached = require('..');
 
-
-// Declare internals
-
-var internals = {};
-
-
 // Test shortcuts
 
+var lab = exports.lab = Lab.script();
+var describe = lab.experiment;
+var it = lab.test;
 var expect = Lab.expect;
-var before = Lab.before;
-var after = Lab.after;
-var describe = Lab.experiment;
-var it = Lab.test;
 
 
 describe('Memcache', function () {
@@ -43,7 +36,7 @@ describe('Memcache', function () {
         });
     });
 
-    it('gets an item after settig it', function (done) {
+    it('gets an item after setting it', function (done) {
 
         var client = new Catbox.Client(Memcached);
         client.start(function (err) {
@@ -370,6 +363,62 @@ describe('Memcache', function () {
             expect(memcache.settings.location).to.deep.equal(options.location);
             done();
         });
+
+        it('supports using defaults if no options are passed in', function (done) {
+
+            var memcache;
+            var fn = function () {
+
+                memcache = new Memcached();
+            };
+
+            expect(fn).to.not.throw(Error);
+            expect(memcache.settings.location).to.equal('127.0.0.1:11211');
+            done();
+        });
+
+        it('throws an error if given location and host/port', function (done) {
+
+            var fn = function () {
+
+                var memcache = new Memcached({
+                    location: '127.0.0.1:11211',
+                    host: '127.0.0.1',
+                    port: 11211
+                });
+            };
+
+            expect(fn).to.throw(Error);
+            done();
+        });
+
+        it('throws an error if given location and host', function (done) {
+
+            var fn = function () {
+
+                var memcache = new Memcached({
+                    location: '127.0.0.1:11211',
+                    host: '127.0.0.1'
+                });
+            };
+
+            expect(fn).to.throw(Error);
+            done();
+        });
+
+        it('throws an error if given location and port', function (done) {
+
+            var fn = function () {
+
+                var memcache = new Memcached({
+                    location: '127.0.0.1:11211',
+                    port: 11211
+                });
+            };
+
+            expect(fn).to.throw(Error);
+            done();
+        });
     });
 
     describe('#start', function () {
@@ -607,7 +656,7 @@ describe('Memcache', function () {
             memcache.client = {
                 get: function (item, callback) {
 
-                    callback(null, '{ "item": "false" }');
+                    callback(null, '{}');
                 }
             };
 
