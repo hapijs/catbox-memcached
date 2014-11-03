@@ -17,7 +17,7 @@
     "node": ">=0.10.30"
   },
   "dependencies": {
-    "memcached": "^0.2.8",
+    "memcached": "^2.0.0",
     "hoek": "2.x.x"
   },
   "devDependencies": {
