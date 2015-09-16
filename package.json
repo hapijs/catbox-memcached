@@ -7,7 +7,7 @@
     "Eran Hammer <eran@hammer.io> (http://hueniverse.com)"
   ],
   "repository": "git://github.com/hapijs/catbox-memcached",
-  "main": "index",
+  "main": "lib/index.js",
   "keywords": [
     "cache",
     "catbox",
@@ -22,11 +22,12 @@
   },
   "devDependencies": {
     "catbox": "2.x.x",
-    "code": "^1.2.1",
+    "code": "1.x.x",
     "lab": "5.x.x"
   },
   "scripts": {
-    "test": "make test-cov"
+    "test": "lab -r console -t 100 -a code -L",
+    "test-cov-html": "lab -r html -o coverage.html -a code -L"
   },
   "licenses": [
     {

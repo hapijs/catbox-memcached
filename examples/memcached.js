@@ -46,12 +46,10 @@ internals.getResponse = function (callback) {
         else if (cached) {
             return callback(null, 'From cache: ' + cached.item);
         }
-        else {
-            internals.client.set(key, cacheValue, ttl, function (error) {
+        internals.client.set(key, cacheValue, ttl, function (error) {
 
-                callback(error, cacheValue);
-            });
-        }
+            callback(error, cacheValue);
+        });
     });
 };
 
@@ -60,7 +58,7 @@ internals.startCache = function (callback) {
 
     var options = {
         partition: 'examples',               // For redis this will store items under keys that start with examples:
-        location: '127.0.0.1:11212',         // If you don't supply, 127.0.0.1:11212 is the default
+        location: '127.0.0.1:11212'         // If you don't supply, 127.0.0.1:11212 is the default
     };
 
     internals.client = new Catbox.Client(require('../'), options);  // Replace require('../') with 'catbox-mongodb' in your own code
@@ -72,7 +70,7 @@ internals.startServer = function (err) {
 
     if (err) {
         console.log(err);
-        console.log('Could not connect to memcache. Ending process.')
+        console.log('Could not connect to memcache. Ending process.');
         process.exit();
     }
     else {
