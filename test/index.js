@@ -281,7 +281,7 @@ it('returns error on missing segment name', function (done) {
     var fn = function () {
 
         var client = new Catbox.Client(Memcached);
-        var cache = new Catbox.Policy(config, client, '');
+        new Catbox.Policy(config, client, '');
     };
     expect(fn).to.throw(Error);
     done();
@@ -295,7 +295,7 @@ it('returns error on bad segment name', function (done) {
     var fn = function () {
 
         var client = new Catbox.Client(Memcached);
-        var cache = new Catbox.Policy(config, client, 'a\0b');
+        new Catbox.Policy(config, client, 'a\0b');
     };
     expect(fn).to.throw(Error);
     done();
@@ -316,7 +316,7 @@ it('throws an error if not created with new', function (done) {
 
     var fn = function () {
 
-        var memcache = Memcached();
+        Memcached();
     };
 
     expect(fn).to.throw(Error);
@@ -380,7 +380,7 @@ describe('constructor()', function () {
 
         var fn = function () {
 
-            var memcache = new Memcached({
+            new Memcached({
                 location: '127.0.0.1:11211',
                 host: '127.0.0.1',
                 port: 11211
@@ -395,7 +395,7 @@ describe('constructor()', function () {
 
         var fn = function () {
 
-            var memcache = new Memcached({
+            new Memcached({
                 location: '127.0.0.1:11211',
                 host: '127.0.0.1'
             });
@@ -409,7 +409,7 @@ describe('constructor()', function () {
 
         var fn = function () {
 
-            var memcache = new Memcached({
+            new Memcached({
                 location: '127.0.0.1:11211',
                 port: 11211
             });
