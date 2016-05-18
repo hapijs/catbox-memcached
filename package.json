@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "hoek": "2.x.x",
-    "memcached": "^2.0.0"
+    "memjs": "^0.10.0"
   },
   "devDependencies": {
     "catbox": "2.x.x",

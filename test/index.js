@@ -747,7 +747,7 @@ describe('set()', function () {
 
         var memcache = new Memcached(options);
         memcache.client = {
-            set: function (key, item, ttl, callback) {
+            set: function (key, item, callback, ttl) {
 
                 callback(new Error());
             }
@@ -789,7 +789,7 @@ describe('drop()', function () {
 
         var memcache = new Memcached(options);
         memcache.client = {
-            del: function (key, callback) {
+            delete: function (key, callback) {
 
                 callback(null, null);
             }
