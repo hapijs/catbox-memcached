@@ -460,7 +460,7 @@ describe('start()', function () {
         });
     });
 
-    it('returns an error when connection fails', function (done) {
+    it('sets client to when the connection fails', function (done) {
 
         var options = {
             location: '127.0.0.1:11212'
@@ -470,9 +470,9 @@ describe('start()', function () {
 
         memcache.start(function (err, result) {
 
-            expect(err).to.exist();
-            expect(err).to.be.instanceOf(Error);
-            expect(memcache.client).to.not.exist();
+            expect(err).to.not.exist();
+            expect(result).to.not.exist();
+            expect(memcache.client).to.exist();
             done();
         });
     });
