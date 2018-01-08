@@ -61,7 +61,7 @@ internals.startCache = function (callback) {
         location: '127.0.0.1:11212'         // If you don't supply, 127.0.0.1:11212 is the default
     };
 
-    internals.client = new Catbox.Client(require('../'), options);  // Replace require('../') with 'catbox-mongodb' in your own code
+    internals.client = new Catbox.Client(require('../'), options);  // Replace require('../') with 'catbox-memcached' in your own code
     internals.client.start(callback);
 };
 
