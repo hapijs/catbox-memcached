@@ -393,6 +393,7 @@ describe('Memcached', () => {
             };
             const memcache = new Memcached(options);
             let tooLongName = "";
+
             for(; tooLongName.length < 300;) {
                 tooLongName += Math.random().toString(36).substring(2, 15);
             }
@@ -400,164 +401,106 @@ describe('Memcached', () => {
             expect(() => memcache.validateSegmentName(tooLongName)).to.throw();
         });
 
+        it('returns null when the name is valid', () => {
+            const options = {
+                location: '127.0.0.1:11211'
+            };
+            const memcache = new Memcached(options);
+
+            expect(memcache.validateSegmentName('valid')).to.equal(null);
+        });
+
+    });
+
+    describe('get()', () => {
+
+        it('returns a rejected promise when the connection is closed', async () => {
+            const options = {
+                location: '127.0.0.1:11211'
+            };
+            const memcache = new Memcached(options);
+
+            await expect(memcache.get('test')).to.reject('Connection is not ready');
+        });
+
+        it('returns a null item when it doesn\'t exist', async () => {
+            const options = {
+                location: '127.0.0.1:11211'
+            };
+            const memcache = new Memcached(options);
+
+            await memcache.start();
+            const result = await memcache.get('');
+
+            expect(result).to.equal(null);
+        });
+
+        it('returns a rejected promise when there is an error returned from parsing the result', async () => {
+            const options = {
+                location: '127.0.0.1:11211'
+            };
+            const memcache = new Memcached(options);
+
+            const key = {
+                id: 'test',
+                segment: 'test'
+            };
+
+            await memcache.start();
+
+            memcache.methods = {
+                get: (item) => {
+                    return Promise.resolve('{"invalid": "json"')
+                }
+            };
+
+            await expect(memcache.get(key)).to.reject('Bad envelope content');
+        });
+
+        it('returns a rejected promise when there is an error with the envelope structure', async () => {
+            const options = {
+                location: '127.0.0.1:11211'
+            };
+            const memcache = new Memcached(options);
+
+            const key = {
+                id: 'test',
+                segment: 'test'
+            };
+
+            await memcache.start();
+
+            memcache.methods = {
+                get: (item) => {
+                    return Promise.resolve('{"wrong": "structure"}')
+                }
+            };
+
+            await expect(memcache.get(key)).to.reject('Incorrect envelope structure');
+        });
+
+        it('is able to retrieve an object that\'s stored when connection is started', async () => {
+            const options = {
+                location: '127.0.0.1:11211'
+            };
+            const memcache = new Memcached(options);
+
+            const key = {
+                id: 'test',
+                segment: 'test'
+            };
+
+            await memcache.start();
+            await memcache.set(key, 'myValue', 200);
+            const result = await memcache.get(key);
+
+            expect(result.item).to.equal('myValue');
+        });
+
     });
 
 });
 
-
-//     it('returns null when there aren\'t any errors', async () =>  {
-//
-//         var options = {
-//             location: '127.0.0.1:11211'
-//         };
-//
-//         var memcache = new Memcached(options);
-//
-//         var result = memcache.validateSegmentName('valid');
-//
-//         expect(result).to.not.be.instanceOf(Error);
-//         expect(result).to.equal(null);
-//         done();
-//     });
-// });
-//
-// describe('get()', function () {
-//
-//     it('passes an error to the callback when the connection is closed', async () =>  {
-//
-//         var options = {
-//             location: '127.0.0.1:11211'
-//         };
-//
-//         var memcache = new Memcached(options);
-//
-//         memcache.get('test', function (err) {
-//
-//             expect(err).to.exist();
-//             expect(err).to.be.instanceOf(Error);
-//             expect(err.message).to.equal('Connection not started');
-//             done();
-//         });
-//     });
-//
-//     it('passes an error to the callback when there is an error returned from getting an item', async () =>  {
-//
-//         var options = {
-//             location: '127.0.0.1:11211'
-//         };
-//
-//         var memcache = new Memcached(options);
-//         memcache.client = {
-//             get: function (item, callback) {
-//
-//                 callback(new Error());
-//             }
-//         };
-//
-//         memcache.get('test', function (err) {
-//
-//             expect(err).to.exist();
-//             expect(err).to.be.instanceOf(Error);
-//             done();
-//         });
-//     });
-//
-//     it('passes an error to the callback when there is an error parsing the result', async () =>  {
-//
-//         var options = {
-//             location: '127.0.0.1:11211'
-//         };
-//
-//         var memcache = new Memcached(options);
-//         memcache.client = {
-//             get: function (item, callback) {
-//
-//                 callback(null, 'test');
-//             }
-//         };
-//
-//         memcache.get('test', function (err) {
-//
-//             expect(err).to.exist();
-//             expect(err.message).to.equal('Bad envelope content');
-//             done();
-//         });
-//     });
-//
-//     it('passes an error to the callback when there is an error with the envelope structure', async () =>  {
-//
-//         var options = {
-//             location: '127.0.0.1:11211'
-//         };
-//
-//         var memcache = new Memcached(options);
-//         memcache.client = {
-//             get: function (item, callback) {
-//
-//                 callback(null, '{}');
-//             }
-//         };
-//
-//         memcache.get('test', function (err) {
-//
-//             expect(err).to.exist();
-//             expect(err.message).to.equal('Incorrect envelope structure');
-//             done();
-//         });
-//     });
-//
-//     it('is able to retrieve an object thats stored when connection is started', async () =>  {
-//
-//         var options = {
-//             location: '127.0.0.1:11211',
-//             partition: 'wwwtest'
-//         };
-//         var key = {
-//             id: 'test',
-//             segment: 'test'
-//         };
-//
-//         var memcache = new Memcached(options);
-//
-//         memcache.start(function () {
-//
-//             memcache.set(key, 'myvalue', 200, function (err) {
-//
-//                 expect(err).to.not.exist();
-//                 memcache.get(key, function (err, result) {
-//
-//                     expect(err).to.not.exist();
-//                     expect(result.item).to.equal('myvalue');
-//                     done();
-//                 });
-//             });
-//         });
-//     });
-//
-//     it('returns null when unable to find the item', async () =>  {
-//
-//         var options = {
-//             location: '127.0.0.1:11211',
-//             partition: 'wwwtest'
-//         };
-//         var key = {
-//             id: 'notfound',
-//             segment: 'notfound'
-//         };
-//
-//         var memcache = new Memcached(options);
-//
-//         memcache.start(function () {
-//
-//             memcache.get(key, function (err, result) {
-//
-//                 expect(err).to.not.exist();
-//                 expect(result).to.not.exist();
-//                 done();
-//             });
-//         });
-//     });
-// });
 //
 // describe('set()', function () {
 //
