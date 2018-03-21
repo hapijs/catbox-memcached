@@ -440,13 +440,11 @@ describe('Memcached', () => {
                 location: '127.0.0.1:11211'
             };
             const memcache = new Memcached(options);
-
             const key = {
                 id: 'test',
                 segment: 'test'
             };
-
-            await memcache.start();
+            memcache.isConnected = true;
 
             memcache.methods = {
                 get: (item) => {
@@ -462,13 +460,11 @@ describe('Memcached', () => {
                 location: '127.0.0.1:11211'
             };
             const memcache = new Memcached(options);
-
             const key = {
                 id: 'test',
                 segment: 'test'
             };
-
-            await memcache.start();
+            memcache.isConnected = true;
 
             memcache.methods = {
                 get: (item) => {
@@ -484,7 +480,6 @@ describe('Memcached', () => {
                 location: '127.0.0.1:11211'
             };
             const memcache = new Memcached(options);
-
             const key = {
                 id: 'test',
                 segment: 'test'
@@ -499,108 +494,126 @@ describe('Memcached', () => {
 
     });
 
-});
+    describe('set()', () => {
 
-//
-// describe('set()', function () {
-//
-//     it('passes an error to the callback when the connection is closed', async () =>  {
-//
-//         var options = {
-//             location: '127.0.0.1:11211'
-//         };
-//
-//         var memcache = new Memcached(options);
-//
-//         memcache.set('test1', 'test1', 3600, function (err) {
-//
-//             expect(err).to.exist();
-//             expect(err).to.be.instanceOf(Error);
-//             expect(err.message).to.equal('Connection not started');
-//             done();
-//         });
-//     });
-//
-//     it('passes an error to the callback when there is an error returned from setting an item', async () =>  {
-//
-//         var options = {
-//             location: '127.0.0.1:11211'
-//         };
-//
-//         var memcache = new Memcached(options);
-//         memcache.client = {
-//             set: function (key, item, ttl, callback) {
-//
-//                 callback(new Error());
-//             }
-//         };
-//
-//         memcache.set('test', 'test', 3600, function (err) {
-//
-//             expect(err).to.exist();
-//             expect(err).to.be.instanceOf(Error);
-//             done();
-//         });
-//     });
-// });
-//
-// describe('drop()', function () {
-//
-//     it('passes an error to the callback when the connection is closed', async () =>  {
-//
-//         var options = {
-//             location: '127.0.0.1:11211'
-//         };
-//
-//         var memcache = new Memcached(options);
-//
-//         memcache.drop('test2', function (err) {
-//
-//             expect(err).to.exist();
-//             expect(err).to.be.instanceOf(Error);
-//             expect(err.message).to.equal('Connection not started');
-//             done();
-//         });
-//     });
-//
-//     it('deletes the item from redis', async () =>  {
-//
-//         var options = {
-//             location: '127.0.0.1:11211'
-//         };
-//
-//         var memcache = new Memcached(options);
-//         memcache.client = {
-//             del: function (key, callback) {
-//
-//                 callback(null, null);
-//             }
-//         };
-//
-//         memcache.drop('test', function (err) {
-//
-//             expect(err).to.not.exist();
-//             done();
-//         });
-//     });
-// });
-//
-// describe('stop()', function () {
-//
-//     it('sets the client to null', async () =>  {
-//
-//         var options = {
-//             location: '127.0.0.1:11211'
-//         };
-//
-//         var memcache = new Memcached(options);
-//
-//         memcache.start(function () {
-//
-//             expect(memcache.client).to.exist();
-//             memcache.stop();
-//             expect(memcache.client).to.not.exist();
-//             done();
-//         });
-//     });
-// });
+        it('returns a rejected promise when the connection is closed', async () => {
+            const options = {
+                location: '127.0.0.1:11211'
+            };
+            const memcache = new Memcached(options);
+            const key = {
+                id: 'test',
+                segment: 'test'
+            };
+
+            await expect(memcache.set(key, 'test1', 3600)).to.reject('Connection is not ready');
+        });
+
+        it('returns a rejected promise when there is an error returned from setting an item', async () => {
+            const options = {
+                location: '127.0.0.1:11211'
+            };
+            const memcache = new Memcached(options);
+            const key = {
+                id: 'test',
+                segment: 'test'
+            };
+            memcache.isConnected = true;
+
+            memcache.methods = {
+                set: (key, value, ttl) => {
+                    throw new Error('test');
+                }
+            };
+
+            await expect(memcache.set(key, true, 0)).to.reject('test');
+        });
+
+        it('doesn\'t return an error when the set succeeds', async () => {
+            const options = {
+                location: '127.0.0.1:11211'
+            };
+            const memcache = new Memcached(options);
+            const key = {
+                id: 'test',
+                segment: 'test'
+            };
+
+            await memcache.start();
+            const result = await memcache.set(key, 'test1', 3600);
+
+            expect(result).to.not.exist();
+        });
+
+    });
+
+    describe('drop()', () => {
+
+        it('returns a rejected promise when the connection is closed', async () => {
+            const options = {
+                location: '127.0.0.1:11211'
+            };
+            const memcache = new Memcached(options);
+            const key = {
+                id: 'test',
+                segment: 'test'
+            };
+
+            await expect(memcache.drop(key)).to.reject('Connection is not ready');
+        });
+
+        it('doesn\'t return an error when the drop succeeds', async () => {
+            const options = {
+                location: '127.0.0.1:11211'
+            };
+            const memcache = new Memcached(options);
+            const key = {
+                id: 'test',
+                segment: 'test'
+            };
+
+            await memcache.start();
+            const result = await memcache.drop(key);
+
+            expect(result).to.not.exist();
+        });
+
+        it('returns a rejected promise when there is an error returned from dropping an item', async () => {
+            const options = {
+                location: '127.0.0.1:11211'
+            };
+            const memcache = new Memcached(options);
+            const key = {
+                id: 'test',
+                segment: 'test'
+            };
+            memcache.isConnected = true;
+
+            memcache.methods = {
+                del: (key, value, ttl) => {
+                    throw new Error('test');
+                }
+            };
+
+            await expect(memcache.drop(key)).to.reject('test');
+        });
+
+    });
+
+    describe('stop()', () => {
+
+        it('sets the client to null', async () => {
+            const options = {
+                location: '127.0.0.1:11211'
+            };
+            const memcache = new Memcached(options);
+
+            await memcache.start();
+            memcache.stop();
+
+            expect(memcache.client).to.be.equal(null);
+        });
+
+    });
+
+});
