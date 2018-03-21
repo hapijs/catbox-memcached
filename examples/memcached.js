@@ -36,14 +36,12 @@ internals.getResponse = async () => {
     const ttl = 10000; // How long item will be cached in milliseconds
 
     const cached = await internals.client.get(key);
-    console.log(cached);
 
     if (cached) {
         return `From cache: ${cached.item}`;
     }
 
-    const value = await internals.client.set(key, cacheValue, ttl);
-    console.log(value);
+    await internals.client.set(key, cacheValue, ttl);
 
     return cacheValue;
 };
@@ -74,7 +72,7 @@ internals.startServer = async () => {
     console.log('Server started at http://localhost:8080/');
 })();
 
-// Useful to debug unhandled rejection errors
+// In case you face unhandled rejection errors
 process.on('unhandledRejection', error => {
     console.log(error);
     process.exit();
