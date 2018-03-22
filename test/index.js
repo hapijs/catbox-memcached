@@ -341,6 +341,23 @@ describe('Memcached', () => {
 
     describe('start()', () => {
 
+        it('throws an error for developers when trying to promisify a non existing method', async () =>  {
+
+            const options = {
+                location: '127.0.0.1:11211'
+            };
+            const memcache = new Memcached(options);
+            memcache.methods.test = null;
+
+            try {
+                await memcache.start();
+            }
+            catch (err) {
+                expect(err.message).to.exist();
+                expect(err.message).to.be.equal('Method test doesn\'t exists');
+            }
+        });
+
         it('sets client when the connection succeeds', async () =>  {
 
             const options = {
