@@ -30,7 +30,7 @@ const Cache = server.cache({ segment: 'examples', expiresIn: 1000 * 5 });
 server.route({
     method: 'GET',
     path: '/{path*}',
-    handler: async(request, h) => {
+    handler: async (request, h) => {
 
         const key = {
             segment: 'examples',
@@ -51,7 +51,8 @@ server.route({
     }
 });
 
-(async() => {
+(async () => {
+
     try {
         await server.start();
     }

@@ -27,6 +27,7 @@ internals.handler = async (req, res) => {
 
 
 internals.getResponse = async () => {
+
     const key = {
         segment: 'example',
         id: 'myExample'
@@ -47,6 +48,7 @@ internals.getResponse = async () => {
 };
 
 internals.startCache = async () => {
+
     const options = {
         partition: 'examples',
         location: '127.0.0.1:11211'
@@ -54,26 +56,30 @@ internals.startCache = async () => {
     try {
         internals.client = new Catbox.Client(require('../'), options);  // Replace require('../') with 'catbox-memcached' in your own code
         await internals.client.start();
-    } catch (error) {
+    }
+    catch (error) {
         console.log('error');
         console.log(error);
         process.exit();
     }
 };
 
-internals.startServer = async () => {
+internals.startServer = () => {
+
     const server = Http.createServer(internals.handler);
     server.listen(8080);
 };
 
-(async() => {
+(async () => {
+
     await internals.startCache();
-    await internals.startServer();
+    internals.startServer();
     console.log('Server started at http://localhost:8080/');
 })();
 
 // In case you face unhandled rejection errors
-process.on('unhandledRejection', error => {
+process.on('unhandledRejection', (error) => {
+
     console.log(error);
     process.exit();
 });
