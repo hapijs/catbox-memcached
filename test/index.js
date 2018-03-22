@@ -358,6 +358,21 @@ describe('Memcached', () => {
             }
         });
 
+        it('returns a rejected promise when testing the connection', async () => {
+
+            const options = {
+                location: '127.0.0.1:11211',
+                timeout: 1
+            };
+            const memcache = new Memcached(options);
+            memcache.testConnection = async (settings) => {
+
+                return await Promise.reject(new Error('Connection Timeout'));
+            };
+
+            await expect(memcache.start()).to.reject('Connection Timeout');
+        });
+
         it('sets client when the connection succeeds', async () =>  {
 
             const options = {
