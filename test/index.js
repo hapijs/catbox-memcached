@@ -10,6 +10,7 @@ const Memcached = require('../');
 describe('Memcached', () => {
 
     it('creates a new connection', async () => {
+
         const client = new Catbox.Client(Memcached);
         await client.start();
 
@@ -17,6 +18,7 @@ describe('Memcached', () => {
     });
 
     it('closes the connection', async () => {
+
         const client = new Catbox.Client(Memcached);
         await client.start();
 
@@ -27,6 +29,7 @@ describe('Memcached', () => {
     });
 
     it('gets an item after setting it', async () =>  {
+
         const client = new Catbox.Client(Memcached);
         await client.start();
 
@@ -38,6 +41,7 @@ describe('Memcached', () => {
     });
 
     it('fails setting an item circular references', async () =>  {
+
         const client = new Catbox.Client(Memcached);
         await client.start();
 
@@ -47,13 +51,15 @@ describe('Memcached', () => {
 
         try {
             await client.set(key, value, 10);
-        } catch (err) {
+        }
+        catch (err) {
             expect(err.message).to.exist();
             expect(err.message).to.equal('Converting circular structure to JSON');
         }
     });
 
     it('fails setting an item with very long ttl', async () =>  {
+
         const client = new Catbox.Client(Memcached);
         await client.start();
 
@@ -61,7 +67,8 @@ describe('Memcached', () => {
 
         try {
             await client.set(key, '123', Math.pow(2, 31));
-        } catch (err) {
+        }
+        catch (err) {
             expect(err).to.exist();
             expect(err.message).to.equal('Invalid ttl (greater than 2147483647)');
         }
@@ -72,15 +79,17 @@ describe('Memcached', () => {
         const client = new Catbox.Client(Memcached);
 
         const start = async () => {
+
             await client.start();
             expect(client.isReady()).to.equal(true);
         };
 
-        start();
-        start();
+        await start();
+        await start();
     });
 
     it('ignored starting a connection twice chained', async () => {
+
         const client = new Catbox.Client(Memcached);
 
         await client.start();
@@ -91,6 +100,7 @@ describe('Memcached', () => {
     });
 
     it('returns not found on get when using null key', async () => {
+
         const client = new Catbox.Client(Memcached);
         await client.start();
 
@@ -99,6 +109,7 @@ describe('Memcached', () => {
     });
 
     it('returns not found on get when item expired', async () => {
+
         const client = new Catbox.Client(Memcached);
         await client.start();
 
@@ -117,6 +128,7 @@ describe('Memcached', () => {
     });
 
     it('returns error on set when using null key', async () => {
+
         const client = new Catbox.Client(Memcached);
         await client.start();
 
@@ -124,6 +136,7 @@ describe('Memcached', () => {
     });
 
     it('returns error on get when using invalid key', async () => {
+
         const client = new Catbox.Client(Memcached);
         await client.start();
 
@@ -131,6 +144,7 @@ describe('Memcached', () => {
     });
 
     it('returns error on drop when using invalid key', async () => {
+
         const client = new Catbox.Client(Memcached);
         await client.start();
 
@@ -138,6 +152,7 @@ describe('Memcached', () => {
     });
 
     it('returns error on set when using invalid key', async () => {
+
         const client = new Catbox.Client(Memcached);
         await client.start();
 
@@ -145,6 +160,7 @@ describe('Memcached', () => {
     });
 
     it('ignores set when using non-positive ttl value', async () => {
+
         const client = new Catbox.Client(Memcached);
         await client.start();
 
@@ -153,6 +169,7 @@ describe('Memcached', () => {
     });
 
     it('returns error on drop when using null key', async () => {
+
         const client = new Catbox.Client(Memcached);
         await client.start();
 
@@ -160,6 +177,7 @@ describe('Memcached', () => {
     });
 
     it('returns error on get when stopped', async () => {
+
         const client = new Catbox.Client(Memcached);
         client.stop();
 
@@ -168,6 +186,7 @@ describe('Memcached', () => {
     });
 
     it('returns error on set when stopped', async () => {
+
         const client = new Catbox.Client(Memcached);
         client.stop();
 
@@ -176,6 +195,7 @@ describe('Memcached', () => {
     });
 
     it('returns error on drop when stopped', async () => {
+
         const client = new Catbox.Client(Memcached);
         client.stop();
 
@@ -184,11 +204,13 @@ describe('Memcached', () => {
     });
 
     it('returns error on missing segment name', () => {
+
         const config = {
             expiresIn: 50000
         };
 
         const fn = () => {
+
             const client = new Catbox.Client(Memcached);
             new Catbox.Policy(config, client, '');
         };
@@ -197,11 +219,13 @@ describe('Memcached', () => {
     });
 
     it('returns error on bad segment name', () => {
+
         const config = {
             expiresIn: 50000
         };
 
         const fn = () => {
+
             const client = new Catbox.Client(Memcached);
             new Catbox.Policy(config, client, 'a\0b');
         };
@@ -210,6 +234,7 @@ describe('Memcached', () => {
     });
 
     it('returns error when cache item dropped while stopped', async () => {
+
         const client = new Catbox.Client(Memcached);
         client.stop();
 
@@ -217,7 +242,9 @@ describe('Memcached', () => {
     });
 
     it('throws an error if not created with new', () => {
+
         const fn = () => {
+
             Memcached();
         };
 
@@ -226,7 +253,8 @@ describe('Memcached', () => {
 
     describe('constructor()', () => {
 
-        it('takes location as a string', async () =>  {
+        it('takes location as a string', () =>  {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -235,7 +263,8 @@ describe('Memcached', () => {
             expect(memcache.settings.location).to.equal(options.location);
         });
 
-        it('takes location as an array', async () =>  {
+        it('takes location as an array', () =>  {
+
             const options = {
                 location: ['127.0.0.1:11211']
             };
@@ -244,7 +273,8 @@ describe('Memcached', () => {
             expect(memcache.settings.location).to.equal(options.location);
         });
 
-        it('takes location as an object', async () =>  {
+        it('takes location as an object', () =>  {
+
             const options = {
                 location: {
                     '127.0.0.1:11211': 1
@@ -255,9 +285,11 @@ describe('Memcached', () => {
             expect(memcache.settings.location).to.equal(options.location);
         });
 
-        it('supports using defaults if no options are passed in', async () =>  {
+        it('supports using defaults if no options are passed in', () =>  {
+
             let memcache = null;
             const fn = () => {
+
                 memcache = new Memcached();
             };
 
@@ -265,8 +297,10 @@ describe('Memcached', () => {
             expect(memcache.settings.location).to.equal('127.0.0.1:11211');
         });
 
-        it('throws an error if given location and host/port', async () =>  {
+        it('throws an error if given location and host/port', () =>  {
+
             const fn = () => {
+
                 new Memcached({
                     location: '127.0.0.1:11211',
                     host: '127.0.0.1',
@@ -277,8 +311,10 @@ describe('Memcached', () => {
             expect(fn).to.throw(Error);
         });
 
-        it('throws an error if given location and host', async () =>  {
+        it('throws an error if given location and host', () =>  {
+
             const fn = () => {
+
                 new Memcached({
                     location: '127.0.0.1:11211',
                     host: '127.0.0.1'
@@ -288,8 +324,10 @@ describe('Memcached', () => {
             expect(fn).to.throw(Error);
         });
 
-        it('throws an error if given location and port', async () =>  {
+        it('throws an error if given location and port', () =>  {
+
             const fn = () => {
+
                 new Memcached({
                     location: '127.0.0.1:11211',
                     port: 11211
@@ -304,6 +342,7 @@ describe('Memcached', () => {
     describe('start()', () => {
 
         it('sets client when the connection succeeds', async () =>  {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -314,6 +353,7 @@ describe('Memcached', () => {
         });
 
         it('sets isReady to true when the connection succeeds', async () => {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -324,6 +364,7 @@ describe('Memcached', () => {
         });
 
         it('reuses the client when a connection is already started', async () =>  {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -342,7 +383,8 @@ describe('Memcached', () => {
 
     describe('validateSegmentName()', () => {
 
-        it('returns an error when the name is empty', async () =>  {
+        it('returns an error when the name is empty', () =>  {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -351,7 +393,8 @@ describe('Memcached', () => {
             expect(() => memcache.validateSegmentName('')).to.throw('Empty string');
         });
 
-        it('returns an error when the name has a null character', async () =>  {
+        it('returns an error when the name has a null character', () =>  {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -360,7 +403,8 @@ describe('Memcached', () => {
             expect(() => memcache.validateSegmentName('\0test')).to.throw();
         });
 
-        it('returns an error when the name has a space character', async () =>  {
+        it('returns an error when the name has a space character', () =>  {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -369,7 +413,8 @@ describe('Memcached', () => {
             expect(() => memcache.validateSegmentName(' test')).to.throw();
         });
 
-        it('returns an error when the name has a tab character', async () =>  {
+        it('returns an error when the name has a tab character', () =>  {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -378,7 +423,8 @@ describe('Memcached', () => {
             expect(() => memcache.validateSegmentName('\ttest')).to.throw();
         });
 
-        it('returns an error when the name has a new line character', async () =>  {
+        it('returns an error when the name has a new line character', () =>  {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -388,13 +434,14 @@ describe('Memcached', () => {
         });
 
         it('returns an error when the name is too long', () => {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
             const memcache = new Memcached(options);
-            let tooLongName = "";
+            let tooLongName = '';
 
-            for(; tooLongName.length < 300;) {
+            for (; tooLongName.length < 300;) {
                 tooLongName += Math.random().toString(36).substring(2, 15);
             }
 
@@ -402,6 +449,7 @@ describe('Memcached', () => {
         });
 
         it('returns null when the name is valid', () => {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -415,6 +463,7 @@ describe('Memcached', () => {
     describe('get()', () => {
 
         it('returns a rejected promise when the connection is closed', async () => {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -424,6 +473,7 @@ describe('Memcached', () => {
         });
 
         it('returns a null item when it doesn\'t exist', async () => {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -436,6 +486,7 @@ describe('Memcached', () => {
         });
 
         it('returns a rejected promise when there is an error returned from parsing the result', async () => {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -448,7 +499,8 @@ describe('Memcached', () => {
 
             memcache.methods = {
                 get: (item) => {
-                    return Promise.resolve('{"invalid": "json"')
+
+                    return Promise.resolve('{"invalid": "json"');
                 }
             };
 
@@ -456,6 +508,7 @@ describe('Memcached', () => {
         });
 
         it('returns a rejected promise when there is an error with the envelope structure', async () => {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -468,7 +521,8 @@ describe('Memcached', () => {
 
             memcache.methods = {
                 get: (item) => {
-                    return Promise.resolve('{"wrong": "structure"}')
+
+                    return Promise.resolve('{"wrong": "structure"}');
                 }
             };
 
@@ -476,6 +530,7 @@ describe('Memcached', () => {
         });
 
         it('is able to retrieve an object that\'s stored when connection is started', async () => {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -497,6 +552,7 @@ describe('Memcached', () => {
     describe('set()', () => {
 
         it('returns a rejected promise when the connection is closed', async () => {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -510,6 +566,7 @@ describe('Memcached', () => {
         });
 
         it('returns a rejected promise when there is an error returned from setting an item', async () => {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -521,7 +578,8 @@ describe('Memcached', () => {
             memcache.isConnected = true;
 
             memcache.methods = {
-                set: (key, value, ttl) => {
+                set: (searchKey, value, ttl) => {
+
                     throw new Error('test');
                 }
             };
@@ -530,6 +588,7 @@ describe('Memcached', () => {
         });
 
         it('doesn\'t return an error when the set succeeds', async () => {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -550,6 +609,7 @@ describe('Memcached', () => {
     describe('drop()', () => {
 
         it('returns a rejected promise when the connection is closed', async () => {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -563,6 +623,7 @@ describe('Memcached', () => {
         });
 
         it('doesn\'t return an error when the drop succeeds', async () => {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -579,6 +640,7 @@ describe('Memcached', () => {
         });
 
         it('returns a rejected promise when there is an error returned from dropping an item', async () => {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
@@ -590,7 +652,8 @@ describe('Memcached', () => {
             memcache.isConnected = true;
 
             memcache.methods = {
-                del: (key, value, ttl) => {
+                del: (searchKey, value, ttl) => {
+
                     throw new Error('test');
                 }
             };
@@ -603,6 +666,7 @@ describe('Memcached', () => {
     describe('stop()', () => {
 
         it('sets the client to null', async () => {
+
             const options = {
                 location: '127.0.0.1:11211'
             };
