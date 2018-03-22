@@ -607,16 +607,16 @@ describe('Memcached', () => {
                 id: 'test',
                 segment: 'test'
             };
+
             memcache.isConnected = true;
-
             memcache.methods = {
-                set: (searchKey, value, ttl) => {
+                set: async (targetKey, value, ttl) => {
 
-                    throw new Error('test');
+                    return await Promise.reject(new Error('Error'));
                 }
             };
 
-            await expect(memcache.set(key, true, 0)).to.reject('test');
+            await expect(memcache.set(key, 'value', 0)).to.reject('Error');
         });
 
         it('doesn\'t return an error when the set succeeds', async () => {
@@ -681,16 +681,16 @@ describe('Memcached', () => {
                 id: 'test',
                 segment: 'test'
             };
+
             memcache.isConnected = true;
-
             memcache.methods = {
-                del: (searchKey, value, ttl) => {
+                del: async (targetKey) => {
 
-                    throw new Error('test');
+                    return await Promise.reject(new Error('Error'));
                 }
             };
 
-            await expect(memcache.drop(key)).to.reject('test');
+            await expect(memcache.drop(key)).to.reject('Error');
         });
 
     });
