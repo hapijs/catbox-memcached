@@ -5,7 +5,7 @@ Memcached adapter for catbox
 
 [![Build Status](https://secure.travis-ci.org/hapijs/catbox-memcached.png)](http://travis-ci.org/hapijs/catbox-memcached)
 
-Lead Maintainer: [Jacob Chapel](https://github.com/chapel)
+Lead Maintainer: [Tony Di Benedetto](https://github.com/iniva)
 
 ### Options
 
