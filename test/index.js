@@ -3,6 +3,7 @@
 // Load modules
 
 const { expect } = require('code');
+
 const { describe, it } = exports.lab = require('lab').script();
 const Catbox = require('catbox');
 const Memcached = require('../');
