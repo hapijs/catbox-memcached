@@ -1,0 +1,12 @@
+{
+  "root": true,
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "globals": {},
+  "parserOptions": {
+    "ecmaVersion": 8
+  },
+  "extends": ["eslint-config-hapi"]
+}
