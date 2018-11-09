@@ -25,7 +25,6 @@
   "devDependencies": {
     "catbox": "10.x.x",
     "code": "5.x.x",
-    "coveralls": "3.x.x",
     "eslint": "5.x.x",
     "eslint-config-hapi": "12.x.x",
     "eslint-plugin-hapi": "4.x.x",
@@ -35,7 +34,6 @@
   "scripts": {
     "test": "lab -r console -t 100 -a code -L",
     "test-cov-html": "lab -r html -o coverage.html -a code -L",
-    "coveralls": "lab -r lcov | ./node_modules/.bin/coveralls",
     "lint": "eslint lib test"
   },
   "license": "BSD-3-Clause"

@@ -13,4 +13,3 @@ before_install:
   - export PATH="$HOME/.yarn/bin:$PATH"
 services:
   - memcached
-after_script: "yarn coveralls"
