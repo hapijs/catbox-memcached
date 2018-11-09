@@ -1,7 +1,6 @@
 .idea
 *.iml
 npm-debug.log
-yarn-error.log
 dump.rdb
 node_modules
 results.tap
