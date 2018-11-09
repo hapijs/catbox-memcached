@@ -35,6 +35,7 @@
   "scripts": {
     "test": "lab -r console -t 100 -a code -L",
     "test-cov-html": "lab -r html -o coverage.html -a code -L",
+    "coveralls": "lab -r lcov | ./node_modules/.bin/coveralls",
     "lint": "eslint lib test"
   },
   "license": "BSD-3-Clause"
