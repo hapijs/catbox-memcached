@@ -1,10 +1,14 @@
 {
   "name": "@hapi/catbox-memcached",
   "description": "Memcached adapter for catbox",
-  "version": "2.0.5",
+  "version": "2.1.0",
   "repository": "git://github.com/hapijs/catbox-memcached",
   "main": "lib/index.js",
-  "keywords": ["cache", "catbox", "memcached"],
+  "keywords": [
+    "cache",
+    "catbox",
+    "memcached"
+  ],
   "dependencies": {
     "@hapi/boom": "7.x.x",
     "@hapi/hoek": "6.x.x",
