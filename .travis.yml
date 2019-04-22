@@ -8,6 +8,10 @@ node_js:
 
 sudo: false
 
-services:
-  - "memcached"
+install:
+  - "npm install"
 
+os:
+  - "linux"
+  - "osx"
+  - "windows"

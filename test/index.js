@@ -1,9 +1,9 @@
 'use strict';
 
-const Catbox = require('catbox');
-const Code = require('code');
-const Lab = require('lab');
-const CatboxMemcached = require('../');
+const Catbox = require('@hapi/catbox');
+const CatboxMemcached = require('..');
+const Code = require('@hapi/code');
+const Lab = require('@hapi/lab');
 
 
 const { describe, it } = exports.lab = Lab.script();
@@ -524,7 +524,7 @@ describe('Client', () => {
             await expect(memcache.get(key)).to.reject('Bad envelope content');
         });
 
-        it('returns a rejected promise when there is an error with the envelope structure', async () => {
+        it('returns a rejected promise when there is an error with the envelope structure (missing stored)', async () => {
 
             const options = {
                 location: '127.0.0.1:11211'
@@ -537,7 +537,25 @@ describe('Client', () => {
 
             memcache.start();
 
-            memcache._client.get = (item, callback) => callback(null, '{"wrong": "structure"}');
+            memcache._client.get = (item, callback) => callback(null, '{"item": "x"}');
+
+            await expect(memcache.get(key)).to.reject('Incorrect envelope structure');
+        });
+
+        it('returns a rejected promise when there is an error with the envelope structure (missing item)', async () => {
+
+            const options = {
+                location: '127.0.0.1:11211'
+            };
+            const memcache = new CatboxMemcached(options);
+            const key = {
+                id: 'test',
+                segment: 'test'
+            };
+
+            memcache.start();
+
+            memcache._client.get = (item, callback) => callback(null, '{"stored": "x"}');
 
             await expect(memcache.get(key)).to.reject('Incorrect envelope structure');
         });
