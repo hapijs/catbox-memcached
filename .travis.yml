@@ -13,8 +13,6 @@ install:
 
 os:
   - "linux"
-  - "osx"
-  - "windows"
 
 services:
   - memcached
