@@ -4,7 +4,7 @@
 
 Memcached adapter for catbox
 
-[![Build Status](https://secure.travis-ci.org/hapijs/catbox-memcached.svg?branch=master)](http://travis-ci.org/hapijs/catbox-memcached)
+[![Build Status](https://secure.travis-ci.org/hapijs/catbox-memcached.svg?branch=master)](http://travis-ci.org/hapijs/catbox-memcached) [![Greenkeeper badge](https://badges.greenkeeper.io/hapijs/catbox-memcached.svg)](https://greenkeeper.io/)
 
 ### Options
 
