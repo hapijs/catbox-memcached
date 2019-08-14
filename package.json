@@ -11,13 +11,13 @@
   ],
   "dependencies": {
     "@hapi/boom": "7.x.x",
-    "@hapi/hoek": "6.x.x",
+    "@hapi/hoek": "8.x.x",
     "memcached": "2.x.x"
   },
   "devDependencies": {
     "@hapi/catbox": "10.x.x",
-    "@hapi/code": "5.x.x",
-    "@hapi/lab": "18.x.x"
+    "@hapi/code": "6.x.x",
+    "@hapi/lab": "20.x.x"
   },
   "scripts": {
     "test": "lab -r console -t 100 -a @hapi/code -L -m 15000",

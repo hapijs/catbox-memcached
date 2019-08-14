@@ -52,13 +52,7 @@ describe('Client', () => {
         const value = { a: 1 };
         value.b = value;
 
-        try {
-            await client.set(key, value, 10);
-        }
-        catch (err) {
-            expect(err.message).to.exist();
-            expect(err.message).to.equal('Converting circular structure to JSON');
-        }
+        await expect(client.set(key, value, 10)).to.reject(/Converting circular structure to JSON/);
     });
 
     it('fails setting an item with very long ttl', async () => {
