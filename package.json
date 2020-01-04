@@ -4,20 +4,23 @@
   "version": "2.1.1",
   "repository": "git://github.com/hapijs/catbox-memcached",
   "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
   "keywords": [
     "cache",
     "catbox",
     "memcached"
   ],
   "dependencies": {
-    "@hapi/boom": "7.x.x",
-    "@hapi/hoek": "8.x.x",
+    "@hapi/boom": "9.x.x",
+    "@hapi/hoek": "9.x.x",
     "memcached": "2.x.x"
   },
   "devDependencies": {
-    "@hapi/catbox": "10.x.x",
-    "@hapi/code": "6.x.x",
-    "@hapi/lab": "20.x.x"
+    "@hapi/catbox": "11.x.x",
+    "@hapi/code": "8.x.x",
+    "@hapi/lab": "22.x.x"
   },
   "scripts": {
     "test": "lab -r console -t 100 -a @hapi/code -L -m 15000",
