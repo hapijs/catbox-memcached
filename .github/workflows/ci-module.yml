@@ -1,0 +1,32 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['*', '14', '12']
+
+    services:
+      memcached:
+        image: memcached:alpine
+        ports:
+          - 11211:11211
+
+    runs-on: ubuntu-latest
+    name: ${{ matrix.os }} node@${{ matrix.node }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - name: install
+        run: npm install
+      - name: test
+        run: npm test
