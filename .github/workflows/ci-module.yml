@@ -9,9 +9,23 @@ on:
 
 jobs:
   test:
-    uses: hapijs/.github/.github/workflows/ci-module.yml@master
-    with:
-      min-node-version: 14
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, windows, macos]
+        node: ["*", "16", "14"]
+    runs-on: ${{ matrix.os }}-latest
+    name: ${{ matrix.os }} node@${{ matrix.node }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+          check-latest: ${{ matrix.node == '*' }}
+      - name: install
+        run: npm install
+      - name: test
+        run: npm test
     services:
       memcached:
         image: memcached:alpine
