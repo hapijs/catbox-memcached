@@ -9,7 +9,7 @@ on:
 
 jobs:
   test:
-    uses: hapijs/.github/.github/workflows/ci-plugin.yml@master
+    uses: hapijs/.github/.github/workflows/ci-module.yml@master
     with:
       min-node-version: 14
     services:
