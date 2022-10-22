@@ -1,7 +1,9 @@
 'use strict';
 
+const Memcache = require('memcached');
 const Catbox = require('@hapi/catbox');
-const CatboxMemcached = require('..');
+const { Engine: CatboxMemcached } = require('..');
+
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 
@@ -376,6 +378,36 @@ describe('Client', () => {
             expect(client).to.equal(memcache.client);
         });
 
+        it('throws and not isReady when the connection fails', async (flags) => {
+
+            const options = {
+                location: '127.0.0.1:11234' // Bad port
+            };
+
+            const memcache = new CatboxMemcached(options);
+
+            await expect(memcache.start()).to.reject(/ECONNREFUSED/);
+            expect(memcache.isReady()).to.be.false();
+        });
+
+        it('throws and not isReady when the connection fails for an unexpected reason', async (flags) => {
+
+            const { version  } = Memcache.prototype;
+            flags.onCleanup = () => Object.assign(Memcache.prototype, { version });
+            Memcache.prototype.version = (cb) => {
+
+                process.nextTick(() => cb(new Error('Oops!')));
+            };
+
+            const options = {
+                location: '127.0.0.1:11234' // Bad port
+            };
+
+            const memcache = new CatboxMemcached(options);
+
+            await expect(memcache.start()).to.reject('Oops!');
+            expect(memcache.isReady()).to.be.false();
+        });
     });
 
     describe('validateSegmentName()', () => {
@@ -464,7 +496,7 @@ describe('Client', () => {
             const options = {
                 location: '127.0.0.1:11211'
             };
-            const memcache = new CatboxMemcached(options);
+            const memcache = new CatboxMemcached(options); // Not started
 
             await expect(memcache.get('test')).to.reject('Connection is not ready');
         });
@@ -493,7 +525,7 @@ describe('Client', () => {
                 segment: 'test'
             };
 
-            memcache.start();
+            await memcache.start();
 
             memcache._client.get = (item, callback) => callback(new Error('Boom'));
 
@@ -511,7 +543,7 @@ describe('Client', () => {
                 segment: 'test'
             };
 
-            memcache.start();
+            await memcache.start();
 
             memcache._client.get = (item, callback) => callback(null, '{"invalid": "json"');
 
@@ -529,7 +561,7 @@ describe('Client', () => {
                 segment: 'test'
             };
 
-            memcache.start();
+            await memcache.start();
 
             memcache._client.get = (item, callback) => callback(null, '{"item": "x"}');
 
@@ -547,7 +579,7 @@ describe('Client', () => {
                 segment: 'test'
             };
 
-            memcache.start();
+            await memcache.start();
 
             memcache._client.get = (item, callback) => callback(null, '{"stored": "x"}');
 
@@ -581,7 +613,7 @@ describe('Client', () => {
             const options = {
                 location: '127.0.0.1:11211'
             };
-            const memcache = new CatboxMemcached(options);
+            const memcache = new CatboxMemcached(options); // Not started
             const key = {
                 id: 'test',
                 segment: 'test'
@@ -601,7 +633,7 @@ describe('Client', () => {
                 segment: 'test'
             };
 
-            memcache.start();
+            await memcache.start();
 
             memcache._client.set = (targetKey, value, ttl, callback) => callback(new Error('Error'));
 

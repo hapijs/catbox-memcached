@@ -1,5 +1,5 @@
 
-### Options
+### `new CatboxMemcached.Engine(options)`
 
 - `host` - the Memcache server hostname. Defaults to `127.0.0.1`. **Cannot be used with `location`.**
 - `port` - the Memcache server port. Defaults to `11211`. **Cannot be used with `location`.**

@@ -1,4 +1,5 @@
-Copyright (c) 2012-2020, Sideway Inc, and project contributors  
+Copyright (c) 2012-2022, Project contributors  
+Copyright (c) 2012-2020, Sideway Inc
 Copyright (c) 2012, Walmart.  
 All rights reserved.
 
