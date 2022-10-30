@@ -338,6 +338,17 @@ describe('Client', () => {
             expect(fn).to.throw(Error);
         });
 
+        it('throws an error if given deprecated location', () => {
+
+            const fn = () => {
+
+                new CatboxMemcached({
+                    location: '127.0.0.1:11211'
+                });
+            };
+
+            expect(fn).to.throw(/The "location" option has been replaced with "server"/);
+        });
     });
 
     describe('start()', () => {
