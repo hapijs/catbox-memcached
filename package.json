@@ -18,9 +18,8 @@
     ]
   },
   "dependencies": {
-    "@hapi/boom": "^10.0.0",
     "@hapi/hoek": "^10.0.0",
-    "memcached": "^2.0.0"
+    "memcache-client": "^1.0.1"
   },
   "devDependencies": {
     "@hapi/catbox": "^12.0.0",

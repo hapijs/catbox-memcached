@@ -1,6 +1,6 @@
 'use strict';
 
-const Memcache = require('memcached');
+const { MemcacheClient } = require('memcache-client');
 const Catbox = require('@hapi/catbox');
 const { Engine: CatboxMemcached } = require('..');
 
@@ -252,36 +252,38 @@ describe('Client', () => {
 
     describe('constructor()', () => {
 
-        it('takes location as a string', () => {
+        it('takes server as a string', () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
 
-            expect(memcache.settings.location).to.equal(options.location);
+            expect(memcache.settings.server).to.equal(options.server);
         });
 
-        it('takes location as an array', () => {
+        it('takes servers as an array', () => {
 
             const options = {
-                location: ['127.0.0.1:11211']
-            };
-            const memcache = new CatboxMemcached(options);
-
-            expect(memcache.settings.location).to.equal(options.location);
-        });
-
-        it('takes location as an object', () => {
-
-            const options = {
-                location: {
-                    '127.0.0.1:11211': 1
+                server: {
+                    servers: [
+                        { server: '127.0.0.1:11211', maxConnections: 1 }
+                    ]
                 }
             };
             const memcache = new CatboxMemcached(options);
 
-            expect(memcache.settings.location).to.equal(options.location);
+            expect(memcache.settings.server).to.equal(options.server);
+        });
+
+        it('takes server as an object', () => {
+
+            const options = {
+                server: { server: '127.0.0.1:11211', maxConnections: 1 }
+            };
+            const memcache = new CatboxMemcached(options);
+
+            expect(memcache.settings.server).to.equal(options.server);
         });
 
         it('supports using defaults if no options are passed in', () => {
@@ -293,15 +295,15 @@ describe('Client', () => {
             };
 
             expect(fn).to.not.throw();
-            expect(memcache.settings.location).to.equal('127.0.0.1:11211');
+            expect(memcache.settings.server).to.equal('127.0.0.1:11211');
         });
 
-        it('throws an error if given location and host/port', () => {
+        it('throws an error if given server and host/port', () => {
 
             const fn = () => {
 
                 new CatboxMemcached({
-                    location: '127.0.0.1:11211',
+                    server: '127.0.0.1:11211',
                     host: '127.0.0.1',
                     port: 11211
                 });
@@ -310,12 +312,12 @@ describe('Client', () => {
             expect(fn).to.throw(Error);
         });
 
-        it('throws an error if given location and host', () => {
+        it('throws an error if given server and host', () => {
 
             const fn = () => {
 
                 new CatboxMemcached({
-                    location: '127.0.0.1:11211',
+                    server: '127.0.0.1:11211',
                     host: '127.0.0.1'
                 });
             };
@@ -323,12 +325,12 @@ describe('Client', () => {
             expect(fn).to.throw(Error);
         });
 
-        it('throws an error if given location and port', () => {
+        it('throws an error if given server and port', () => {
 
             const fn = () => {
 
                 new CatboxMemcached({
-                    location: '127.0.0.1:11211',
+                    server: '127.0.0.1:11211',
                     port: 11211
                 });
             };
@@ -343,7 +345,7 @@ describe('Client', () => {
         it('sets client when the connection succeeds', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
 
@@ -354,7 +356,7 @@ describe('Client', () => {
         it('sets isReady to true when the connection succeeds', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
 
@@ -365,7 +367,7 @@ describe('Client', () => {
         it('reuses the client when a connection is already started', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
 
             const memcache = new CatboxMemcached(options);
@@ -381,7 +383,7 @@ describe('Client', () => {
         it('throws and not isReady when the connection fails', async (flags) => {
 
             const options = {
-                location: '127.0.0.1:11234' // Bad port
+                server: '127.0.0.1:11234' // Bad port
             };
 
             const memcache = new CatboxMemcached(options);
@@ -392,15 +394,12 @@ describe('Client', () => {
 
         it('throws and not isReady when the connection fails for an unexpected reason', async (flags) => {
 
-            const { version  } = Memcache.prototype;
-            flags.onCleanup = () => Object.assign(Memcache.prototype, { version });
-            Memcache.prototype.version = (cb) => {
-
-                process.nextTick(() => cb(new Error('Oops!')));
-            };
+            const { version } = MemcacheClient.prototype;
+            flags.onCleanup = () => Object.assign(MemcacheClient.prototype, { version });
+            MemcacheClient.prototype.version = () => Promise.reject(new Error('Oops!'));
 
             const options = {
-                location: '127.0.0.1:11234' // Bad port
+                server: '127.0.0.1:11234' // Bad port
             };
 
             const memcache = new CatboxMemcached(options);
@@ -415,7 +414,7 @@ describe('Client', () => {
         it('returns an error when the name is empty', () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
 
@@ -425,7 +424,7 @@ describe('Client', () => {
         it('returns an error when the name has a null character', () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
 
@@ -435,7 +434,7 @@ describe('Client', () => {
         it('returns an error when the name has a space character', () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
 
@@ -445,7 +444,7 @@ describe('Client', () => {
         it('returns an error when the name has a tab character', () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
 
@@ -455,7 +454,7 @@ describe('Client', () => {
         it('returns an error when the name has a new line character', () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
 
@@ -465,7 +464,7 @@ describe('Client', () => {
         it('returns an error when the name is too long', () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
             let tooLongName = '';
@@ -480,7 +479,7 @@ describe('Client', () => {
         it('returns null when the name is valid', () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
 
@@ -494,7 +493,7 @@ describe('Client', () => {
         it('returns a rejected promise when the connection is closed', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options); // Not started
 
@@ -504,7 +503,7 @@ describe('Client', () => {
         it('returns a null item when it doesn\'t exist', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
 
@@ -517,7 +516,7 @@ describe('Client', () => {
         it('returns a rejected promise when there is an error returned from client', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
             const key = {
@@ -527,15 +526,15 @@ describe('Client', () => {
 
             await memcache.start();
 
-            memcache._client.get = (item, callback) => callback(new Error('Boom'));
+            memcache._client.get = () => Promise.reject(new Error('Error'));
 
-            await expect(memcache.get(key)).to.reject('Boom');
+            await expect(memcache.get(key)).to.reject('Error');
         });
 
         it('returns a rejected promise when there is an error returned from parsing the result', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
             const key = {
@@ -545,7 +544,7 @@ describe('Client', () => {
 
             await memcache.start();
 
-            memcache._client.get = (item, callback) => callback(null, '{"invalid": "json"');
+            memcache._client.get = () => Promise.resolve({ value: '{"invalid": "json"' });
 
             await expect(memcache.get(key)).to.reject('Bad envelope content');
         });
@@ -553,7 +552,7 @@ describe('Client', () => {
         it('returns a rejected promise when there is an error with the envelope structure (missing stored)', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
             const key = {
@@ -563,7 +562,7 @@ describe('Client', () => {
 
             await memcache.start();
 
-            memcache._client.get = (item, callback) => callback(null, '{"item": "x"}');
+            memcache._client.get = () => Promise.resolve({ value: '{"item": "x"}' });
 
             await expect(memcache.get(key)).to.reject('Incorrect envelope structure');
         });
@@ -571,7 +570,7 @@ describe('Client', () => {
         it('returns a rejected promise when there is an error with the envelope structure (missing item)', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
             const key = {
@@ -581,7 +580,7 @@ describe('Client', () => {
 
             await memcache.start();
 
-            memcache._client.get = (item, callback) => callback(null, '{"stored": "x"}');
+            memcache._client.get = () => Promise.resolve({ value: '{"stored": "x"}' });
 
             await expect(memcache.get(key)).to.reject('Incorrect envelope structure');
         });
@@ -589,7 +588,7 @@ describe('Client', () => {
         it('is able to retrieve an object that\'s stored when connection is started', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
             const key = {
@@ -611,7 +610,7 @@ describe('Client', () => {
         it('returns a rejected promise when the connection is closed', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options); // Not started
             const key = {
@@ -625,7 +624,7 @@ describe('Client', () => {
         it('returns a rejected promise when there is an error returned from setting an item', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
             const key = {
@@ -635,7 +634,7 @@ describe('Client', () => {
 
             await memcache.start();
 
-            memcache._client.set = (targetKey, value, ttl, callback) => callback(new Error('Error'));
+            memcache._client.set = () => Promise.reject(new Error('Error'));
 
             await expect(memcache.set(key, 'value', 0)).to.reject('Error');
         });
@@ -643,7 +642,7 @@ describe('Client', () => {
         it('doesn\'t return an error when the set succeeds', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
             const key = {
@@ -664,7 +663,7 @@ describe('Client', () => {
         it('returns a rejected promise when the connection is closed', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
             const key = {
@@ -678,7 +677,7 @@ describe('Client', () => {
         it('doesn\'t return an error when the drop succeeds', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
             const key = {
@@ -695,7 +694,7 @@ describe('Client', () => {
         it('returns a rejected promise when there is an error returned from dropping an item', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
             const key = {
@@ -705,7 +704,7 @@ describe('Client', () => {
 
             await memcache.start();
 
-            memcache._client.del = (targetKey, callback) => callback(new Error('Error'));
+            memcache._client.delete = () => Promise.reject(new Error('Error'));
 
             await expect(memcache.drop(key)).to.reject('Error');
         });
@@ -717,7 +716,7 @@ describe('Client', () => {
         it('sets the client to null', async () => {
 
             const options = {
-                location: '127.0.0.1:11211'
+                server: '127.0.0.1:11211'
             };
             const memcache = new CatboxMemcached(options);
 
